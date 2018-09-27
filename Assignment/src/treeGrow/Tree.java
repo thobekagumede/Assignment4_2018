@@ -48,6 +48,31 @@ public
 	
 	// grow a tree according to its sun exposure
 	void sungrow(Land land) {
-		// to do
+		// newextent = extent + s / 1000.
+		setExt(getExt() + growfactor / 1000); 
+	}
+	
+	int getStartX()
+	{
+		int startX = getX() - (int) Math.ceil(getExt());
+		return startX < 0 ? 0 : startX;
+	}
+	
+	int getStartY()
+	{
+		int startY = getY() - (int) Math.ceil(getExt());
+		return startY < 0 ? 0 : startY;
+	}
+	
+	int getEndX(int dim)
+	{
+		int endX = getX() + (int) Math.ceil(getExt());
+		return endX > dim ? dim : endX;
+	}
+	
+	int getEndY(int dim)
+	{
+		int endY = getY() + (int) Math.ceil(getExt());
+		return endY > dim ? dim : endY;
 	}
 }

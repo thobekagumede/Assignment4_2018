@@ -58,17 +58,10 @@ public class Land{
 	// reduce the sun exposure of the shaded landscape to 10% of the original
 	// within the extent of <tree>
 	void shadow(Tree tree){
-		int treeExtent = (int) Math.ceil(tree.getExt());
-		int treeX = tree.getX();
-		int treeY = tree.getY();
-		int startX = treeX - treeExtent;
-		startX = startX < 0 ? 0 : startX;
-		int startY = treeY - treeExtent;
-		startY = startY < 0 ? 0 : startY;
-		int endX = treeX + treeExtent;
-		endX = endX > dimX ? dimX : endX;
-		int endY = treeY + treeExtent;
-		endY = endY > dimY ? dimY : endY;
+		int startX = tree.getStartX();
+		int startY = tree.getStartY();
+		int endX = tree.getEndX(dimX);
+		int endY = tree.getEndY(dimY);
 		
 		for (int i = startX; i < endX; i++)
 		{
