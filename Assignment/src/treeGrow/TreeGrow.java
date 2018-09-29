@@ -1,11 +1,14 @@
 package treeGrow;
 
-import javax.swing.*;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class TreeGrow {
 	static long startTime = 0;
@@ -70,5 +73,8 @@ public class TreeGrow {
 		setupGUI(frameX, frameY, sundata.trees);
 		
 		// create and start simulation loop here as separate thread
+		ForestSimulation simulation = new ForestSimulation(sundata);
+		Thread fpt = new Thread(simulation);
+        fpt.start();
 	}
 }

@@ -71,4 +71,23 @@ public class Land{
 			}
 		}
 	}
+	
+	double calcTreeAverage(Tree tree){
+		int startX = tree.getStartX();
+		int startY = tree.getStartY();
+		int endX = tree.getEndX(dimX);
+		int endY = tree.getEndY(dimY);
+		
+		float sum = 0;
+		int count = 0;
+		for (int i = startX; i < endX; i++)
+		{
+			for (int j = startY; j < endY; j++)
+			{
+					sum += getShade(i, j);
+					count++;
+			}
+		}
+		return sum/count;
+	}
 }

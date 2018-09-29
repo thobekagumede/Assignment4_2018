@@ -1,7 +1,7 @@
 package treeGrow;
 
 // Trees define a canopy which covers a square area of the landscape
-public class Tree{
+public class Tree implements Comparable<Tree>{
 	
 private
 	int xpos;	// x-coordinate of center of tree canopy
@@ -52,6 +52,9 @@ public
 		setExt(getExt() + growfactor / 1000); 
 	}
 	
+	/*g.fillRect(forest[rt].getY() - (int) forest[rt].getExt(), forest[rt].getX() - (int) forest[rt].getExt(),
+						   2*(int) forest[rt].getExt()+1,2*(int) forest[rt].getExt()+1);*/
+	
 	int getStartX()
 	{
 		int startX = getX() - (int) Math.ceil(getExt());
@@ -74,5 +77,10 @@ public
 	{
 		int endY = getY() + (int) Math.ceil(getExt());
 		return endY > dim ? dim : endY;
+	}
+	
+	public int compareTo(Tree tree)
+	{
+	     return((int)this.getExt() - (int)tree.getExt());
 	}
 }
