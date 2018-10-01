@@ -24,17 +24,17 @@ public class ForestSimulation implements Runnable{
 			float minh = 18.0f;
 			float maxh = 20.0f;
 			int treeIndex = 0;
+			// for each layer e.g. (18,20]; (16,18]...
 			for(int layer = 0; layer <= 10; layer++) {
 				for (; treeIndex < numberOfTrees; treeIndex++)
 				{
 					Tree thisTree = forest.get(treeIndex);
+					// Check if new layer is starting
 					if(!isBetween(maxh, minh, thisTree.getExt()))
 						break;
-					double average = sundata.sunmap.calcTreeAverage(thisTree);
-					System.out.println(average);
-					sundata.sunmap.shadow(thisTree);
-					thisTree.sungrow(sundata.sunmap);
+					thisTree.simulateOnce(sundata.sunmap);
 				}
+				// extent values for next layer
 				maxh = minh;
 				minh -= 2.0f; // next band of trees
 			}

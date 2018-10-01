@@ -47,9 +47,9 @@ public
 	}
 	
 	// grow a tree according to its sun exposure
-	void sungrow(Land land) {
+	void sungrow(float average) {
 		// newextent = extent + s / 1000.
-		setExt(getExt() + growfactor / 1000); 
+		setExt((float)(getExt() + average / 1000)); 
 	}
 	
 	/*g.fillRect(forest[rt].getY() - (int) forest[rt].getExt(), forest[rt].getX() - (int) forest[rt].getExt(),
@@ -82,5 +82,16 @@ public
 	public int compareTo(Tree tree)
 	{
 	     return((int)this.getExt() - (int)tree.getExt());
+	}
+	
+	public void simulateOnce(Land land)
+	{
+		// 1. Calculate the average sunlight (s) in the cells that the tree covers.
+		double average = land.calcTreeAverage(this);
+		// 2. Reduce the sunlight in these cells to 10% of their original value.
+		land.shadow(this);
+		// 3. A tree then grows in proportion to the average sunlight divided by a factor of
+		// 1000: newextent = extent + s / 1000.
+		sungrow((float) average);
 	}
 }

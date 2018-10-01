@@ -1,9 +1,6 @@
 package treeGrow;
 
 import java.awt.Dimension;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
