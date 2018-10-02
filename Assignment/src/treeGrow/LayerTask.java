@@ -1,25 +1,26 @@
 package treeGrow;
 
+import java.util.List;
 import java.util.concurrent.RecursiveAction;
 
 public class LayerTask extends RecursiveAction{
-	static final int SEQUENTIAL_CUTOFF=2;
+	static final int SEQUENTIAL_CUTOFF=10;
 	Land land;
-	Tree[] treeArray;
+	List<Tree> treeArray;
 	int dimSize; 
 	int lo; // arguments
 	int hi;
 	
-	public LayerTask(Land land, Tree[] treeArray, int dimSize) {
+	public LayerTask(Land land, List<Tree> treeArray, int dimSize) {
 		super();
 		this.land = land;
 		this.treeArray = treeArray;
 		this.dimSize = dimSize;
 		lo = 0;
-		hi = treeArray.length;
+		hi = treeArray.size();
 	}
 	
-	public LayerTask(Land land, Tree[] treeArray, int dimSize, int lo, int hi) {
+	public LayerTask(Land land, List<Tree> treeArray, int dimSize, int lo, int hi) {
 		this(land, treeArray, dimSize);
 		this.lo = lo;
 		this.hi = hi;
@@ -29,7 +30,7 @@ public class LayerTask extends RecursiveAction{
 	protected void compute() {
 		if((hi - lo)< SEQUENTIAL_CUTOFF){
 			   for(int i= lo;i<hi;i++){
-				   treeArray[i].simulateOnce(land); 
+				   treeArray.get(i).simulateOnce(land); 
 			   }
 		   }else {
 			 int mid = (lo + hi)/2;

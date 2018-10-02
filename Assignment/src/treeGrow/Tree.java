@@ -47,7 +47,7 @@ public
 	}
 	
 	// grow a tree according to its sun exposure
-	void sungrow(float average) {
+	synchronized void sungrow(float average) {
 		// newextent = extent + s / 1000.
 		setExt((float)(getExt() + average / 1000)); 
 	}

@@ -3,6 +3,7 @@ package treeGrow;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -34,6 +35,16 @@ public class TreeGrow {
       	JPanel g = new JPanel();
         g.setLayout(new BoxLayout(g, BoxLayout.PAGE_AXIS)); 
       	g.setPreferredSize(fsize);
+      	
+      	JPanel controls = new JPanel();
+      	JButton resetButton = new JButton("Reset");
+      	resetButton.addActionListener(new ButtonController("reset"));
+      	JButton pauseButton = new JButton("Pause");
+      	pauseButton.addActionListener(new ButtonController("pause"));
+      	JButton playButton = new JButton("Play");
+      	playButton.addActionListener(new ButtonController("play"));
+      	JButton endButton = new JButton("End");
+      	endButton.addActionListener(new ButtonController("end"));
  
 		fp = new ForestPanel(trees);
 		fp.setPreferredSize(new Dimension(frameX,frameY));
@@ -41,10 +52,16 @@ public class TreeGrow {
 		fp.setAutoscrolls(true);
 		scrollFrame.setPreferredSize(fsize);
 	    g.add(scrollFrame);
+	    
+	    controls.add(resetButton);
+	    controls.add(pauseButton);
+	    controls.add(playButton);
+	    controls.add(endButton);
     	
       	frame.setLocationRelativeTo(null);  // Center window on screen.
       	frame.add(g); //add contents to window
         frame.setContentPane(g);     
+        frame.add(controls);
         frame.setVisible(true);
         Thread fpt = new Thread(fp);
         fpt.start();

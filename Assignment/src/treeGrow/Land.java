@@ -57,7 +57,7 @@ public class Land{
 	
 	// reduce the sun exposure of the shaded landscape to 10% of the original
 	// within the extent of <tree>
-	void shadow(Tree tree){
+	synchronized void shadow(Tree tree){
 		int startX = tree.getStartX();
 		int startY = tree.getStartY();
 		int endX = tree.getEndX(dimX);
