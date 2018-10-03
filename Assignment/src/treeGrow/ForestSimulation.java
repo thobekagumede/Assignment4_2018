@@ -5,11 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ForestSimulation implements Runnable{
 	SunData sundata;
 	StringBuffer isPausedString = new StringBuffer("PAUSED");
-	public int year = 0;
+	public AtomicInteger year = new AtomicInteger(0);
 	public static ForkJoinPool pool = new ForkJoinPool(2);
 	AtomicBoolean reset = new AtomicBoolean(false);
 	public ForestSimulation(SunData sundata)
@@ -25,7 +26,7 @@ public class ForestSimulation implements Runnable{
 		{
 			if(reset.get())
 			{
-				year = 0;
+				year.set(0);
 				TreeGrow.yearText.setText(String.valueOf(year));
 				sundata.resetTreeExtents();
 				reset.set(false);
@@ -35,9 +36,9 @@ public class ForestSimulation implements Runnable{
 			{
 				if(reset.get())
 				{
-					year = 0;
+					year.set(0);
 					TreeGrow.yearText.setText(String.valueOf(year));
-					sundata.sunmap.resetShade();
+					sundata.resetTreeExtents();
 					reset.set(false);
 				}
 			}
@@ -67,8 +68,9 @@ public class ForestSimulation implements Runnable{
 				treeIndex++;
 			}
 			try {
-				Thread.sleep(20);
-				TreeGrow.yearText.setText(String.valueOf(++year));
+				Thread.sleep(30);
+				year.set(year.get()+1);
+				TreeGrow.yearText.setText(String.valueOf(year.get()));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			};

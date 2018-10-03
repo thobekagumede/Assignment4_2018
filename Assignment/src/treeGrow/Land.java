@@ -57,7 +57,7 @@ public class Land{
 	
 	// reduce the sun exposure of the shaded landscape to 10% of the original
 	// within the extent of <tree>
-	synchronized void shadow(Tree tree){
+	void shadow(Tree tree){
 		int startX = tree.getStartX();
 		int startY = tree.getStartY();
 		int endX = tree.getEndX(dimX);
@@ -67,27 +67,10 @@ public class Land{
 		{
 			for (int j = startY; j < endY; j++)
 			{
+				synchronized(this) {
 					setShade(i, j, getShade(i, j) * shadefraction);
+				}
 			}
 		}
-	}
-	
-	double calcTreeAverage(Tree tree){
-		int startX = tree.getStartX();
-		int startY = tree.getStartY();
-		int endX = tree.getEndX(dimX);
-		int endY = tree.getEndY(dimY);
-		
-		float sum = 0;
-		int count = 0;
-		for (int i = startX; i < endX; i++)
-		{
-			for (int j = startY; j < endY; j++)
-			{
-					sum += getShade(i, j);
-					count++;
-			}
-		}
-		return sum/count;
 	}
 }

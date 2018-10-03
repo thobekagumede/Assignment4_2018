@@ -37,8 +37,22 @@ public
 
 	// return the average sunlight for the cells covered by the tree
 	float sunexposure(Land land){
-		// to do 
-		return 0.0f; // not correct
+		int startX = getStartX();
+		int startY = getStartY();
+		int endX = getEndX(land.dimX);
+		int endY = getEndY(land.dimX);
+		
+		float sum = 0;
+		int count = 0;
+		for (int i = startX; i < endX; i++)
+		{
+			for (int j = startY; j < endY; j++)
+			{
+					sum += land.getShade(i, j);
+					count++;
+			}
+		}
+		return sum/count;
 	}
 	
 	// is the tree extent within the provided range [minr, maxr)
@@ -47,7 +61,7 @@ public
 	}
 	
 	// grow a tree according to its sun exposure
-	synchronized void sungrow(float average) {
+	void sungrow(float average) {
 		// newextent = extent + s / 1000.
 		setExt((float)(getExt() + average / 1000)); 
 	}
@@ -87,11 +101,11 @@ public
 	public void simulateOnce(Land land)
 	{
 		// 1. Calculate the average sunlight (s) in the cells that the tree covers.
-		double average = land.calcTreeAverage(this);
+		float average = sunexposure(land);
 		// 2. Reduce the sunlight in these cells to 10% of their original value.
 		land.shadow(this);
 		// 3. A tree then grows in proportion to the average sunlight divided by a factor of
 		// 1000: newextent = extent + s / 1000.
-		sungrow((float) average);
+		sungrow(average);
 	}
 }

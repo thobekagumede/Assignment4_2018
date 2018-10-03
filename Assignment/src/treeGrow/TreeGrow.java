@@ -15,7 +15,7 @@ public class TreeGrow {
 	static int frameX;
 	static int frameY;
 	static ForestPanel fp;
-	static JTextArea yearText;
+	static volatile JTextArea yearText;
 
 	// start timer
 	private static void tick(){
@@ -50,7 +50,7 @@ public class TreeGrow {
       	endButton.addActionListener(new ButtonController("end"));
       	
       	JPanel labels = new JPanel();
-      	yearText =new JTextArea(simulation.year+"");
+      	yearText =new JTextArea(simulation.year.toString());
       	JLabel yearLabel = new JLabel("year(s)");
       	labels.add(yearText);
       	labels.add(yearLabel);
@@ -101,6 +101,7 @@ public class TreeGrow {
 		
 		// start simulation loop here as separate thread
 		Thread fpt = new Thread(simulation);
+		fpt.setPriority(1);
         fpt.start();
 	}
 }
