@@ -4,54 +4,71 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ForestSimulation implements Runnable{
 	SunData sundata;
-	
+	StringBuffer isPausedString = new StringBuffer("PAUSED");
+	public int year = 0;
+	public static ForkJoinPool pool = new ForkJoinPool(2);
+	AtomicBoolean reset = new AtomicBoolean(false);
 	public ForestSimulation(SunData sundata)
 	{
 		this.sundata = sundata;
 	}
 	@Override
 	public void run() {
-		int numberOfTrees = sundata.trees.length;
 		List<Tree> forest = Arrays.asList(sundata.trees);
 		Collections.sort((List) forest);
 		Collections.reverse(forest);
-		int year = 0;
-		while(true)
+		while(true && !forest.isEmpty())
 		{
-			//System.out.println(year);
-			float minh = 18.0f;
-			float maxh = 20.0f;
-			int treeIndex = 0;
-			// for each layer e.g. (18,20]; (16,18]...
-			for(int layer = 0; layer <= 10; layer++) {
-				int layerStartIndex = treeIndex;
-				for (; treeIndex < numberOfTrees; treeIndex++)
+			if(reset.get())
+			{
+				year = 0;
+				TreeGrow.yearText.setText(String.valueOf(year));
+				sundata.resetTreeExtents();
+				reset.set(false);
+				pauseSimulation();
+			}
+			while(isPausedString.toString().equals("PAUSED"));
+			{
+				if(reset.get())
 				{
-					Tree thisTree = forest.get(treeIndex);
-					// Check if new layer is starting
-					if(!isBetween(maxh, minh, thisTree.getExt()))
-					{
-						if(treeIndex - layerStartIndex == 0)
-							break;
-						treeIndex--;
-						int layerEndIndex = treeIndex;
-						ForkJoinPool pool = new ForkJoinPool(2);
-						LayerTask layerTask = new LayerTask(sundata.sunmap, forest, sundata.sunmap.getDimX());
-						pool.invoke(layerTask);
-						break;
-					}
-					//thisTree.simulateOnce(sundata.sunmap);
+					year = 0;
+					TreeGrow.yearText.setText(String.valueOf(year));
+					sundata.sunmap.resetShade();
+					reset.set(false);
 				}
-				// extent values for next layer
-				maxh = minh;
-				minh -= 2.0f; // next band of trees
+			}
+			System.out.println(year);
+			int treeIndex = 0;
+			int layerNumber = getStartingLayer(forest);
+			// for each layer e.g. (18,20]; (16,18]...
+			Layer: for(int layer = layerNumber; layer >= 0; layer--) {
+				int layerStartIndex = treeIndex;
+				int layerCount = 0;
+				Trees: while(treeIndex < forest.size())
+				{
+					if(isTreeInCurrentLayer(layer, forest.get(treeIndex).getExt()))
+				{
+						layerCount++;
+						treeIndex++;
+						continue Trees;
+					}
+					else
+						break Trees;
+				}
+				// Simulate
+				LayerTask layerTask = new LayerTask(sundata.sunmap, forest, sundata.sunmap.getDimX(), layerStartIndex, layerStartIndex+layerCount);
+				pool.invoke(layerTask);
+				System.out.println("Working on layer: " + layer*2 + " - " + (layer*2+2));
+				while(!layerTask.isDone());
+				treeIndex++;
 			}
 			try {
 				Thread.sleep(20);
-				year++;
+				TreeGrow.yearText.setText(String.valueOf(++year));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			};
@@ -59,9 +76,28 @@ public class ForestSimulation implements Runnable{
 		}
 	}
 	
-	boolean isBetween(float max, float min, float value)
+	private int getStartingLayer(List<Tree> forest) {
+		int firstExtent = (int) forest.get(0).getExt();
+		return firstExtent/2;
+	}
+	boolean isTreeInCurrentLayer(int layer, float value)
 	{
-		return value < max && value >= min;
+		return value < (layer*2.0f +2) && value >= (layer*2.0f);
+	}
+	
+	public synchronized void playSimulation()
+	{
+		isPausedString.replace(0, isPausedString.length(), "PLAY");
+	}
+	
+	public synchronized void pauseSimulation()
+	{
+		isPausedString.replace(0, isPausedString.length(), "PAUSED");
+	}
+	
+	public synchronized void resetSimulation()
+	{
+		reset.set(true);
 	}
 
 }

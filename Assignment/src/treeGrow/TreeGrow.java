@@ -5,14 +5,17 @@ import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class TreeGrow {
 	static long startTime = 0;
 	static int frameX;
 	static int frameY;
 	static ForestPanel fp;
+	static JTextArea yearText;
 
 	// start timer
 	private static void tick(){
@@ -24,7 +27,7 @@ public class TreeGrow {
 		return (System.currentTimeMillis() - startTime) / 1000.0f; 
 	}
 	
-	public static void setupGUI(int frameX,int frameY,Tree [] trees) {
+	public static void setupGUI(int frameX,int frameY,SunData sunData, ForestSimulation simulation) {
 		Dimension fsize = new Dimension(800, 800);
 		// Frame init and dimensions
     	JFrame frame = new JFrame("Photosynthesis"); 
@@ -38,15 +41,21 @@ public class TreeGrow {
       	
       	JPanel controls = new JPanel();
       	JButton resetButton = new JButton("Reset");
-      	resetButton.addActionListener(new ButtonController("reset"));
+      	resetButton.addActionListener(new ButtonController("reset", simulation));
       	JButton pauseButton = new JButton("Pause");
-      	pauseButton.addActionListener(new ButtonController("pause"));
+      	pauseButton.addActionListener(new ButtonController("pause", simulation));
       	JButton playButton = new JButton("Play");
-      	playButton.addActionListener(new ButtonController("play"));
+      	playButton.addActionListener(new ButtonController("play", simulation));
       	JButton endButton = new JButton("End");
       	endButton.addActionListener(new ButtonController("end"));
+      	
+      	JPanel labels = new JPanel();
+      	yearText =new JTextArea(simulation.year+"");
+      	JLabel yearLabel = new JLabel("year(s)");
+      	labels.add(yearText);
+      	labels.add(yearLabel);
  
-		fp = new ForestPanel(trees);
+		fp = new ForestPanel(sunData.trees);
 		fp.setPreferredSize(new Dimension(frameX,frameY));
 		JScrollPane scrollFrame = new JScrollPane(fp);
 		fp.setAutoscrolls(true);
@@ -62,6 +71,7 @@ public class TreeGrow {
       	frame.add(g); //add contents to window
         frame.setContentPane(g);     
         frame.add(controls);
+        frame.add(labels);
         frame.setVisible(true);
         Thread fpt = new Thread(fp);
         fpt.start();
@@ -81,13 +91,15 @@ public class TreeGrow {
 		// read in forest and landscape information from file supplied as argument
 		sundata.readData(args[0]);
 		System.out.println("Data loaded");
+
+		// create simulation object
+		ForestSimulation simulation = new ForestSimulation(sundata);
 		
 		frameX = sundata.sunmap.getDimX();
 		frameY = sundata.sunmap.getDimY();
-		setupGUI(frameX, frameY, sundata.trees);
+		setupGUI(frameX, frameY, sundata, simulation);
 		
-		// create and start simulation loop here as separate thread
-		ForestSimulation simulation = new ForestSimulation(sundata);
+		// start simulation loop here as separate thread
 		Thread fpt = new Thread(simulation);
         fpt.start();
 	}

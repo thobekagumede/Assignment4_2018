@@ -64,5 +64,13 @@ public class SunData{
 				e.printStackTrace();
 		 }
 	}
+
+	public void resetTreeExtents() {
+		for(Tree tree : trees)
+		{
+			tree.setExt(0.4f);
+		}
+		
+	}
 	
 }

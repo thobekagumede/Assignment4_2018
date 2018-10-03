@@ -30,12 +30,13 @@ public class LayerTask extends RecursiveAction{
 	protected void compute() {
 		if((hi - lo)< SEQUENTIAL_CUTOFF){
 			   for(int i= lo;i<hi;i++){
-				   treeArray.get(i).simulateOnce(land); 
+				   treeArray.get(i).simulateOnce(land);
+				   return;
 			   }
 		   }else {
 			 int mid = (lo + hi)/2;
 			 LayerTask left = new LayerTask(land, treeArray, dimSize, lo, mid); 
-			 LayerTask right = new LayerTask(land, treeArray, dimSize, mid, mid);
+			 LayerTask right = new LayerTask(land, treeArray, dimSize, mid, hi);
 			 left.fork();
 			 right.fork();
 			 left.join();
